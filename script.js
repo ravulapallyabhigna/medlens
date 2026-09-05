@@ -99,12 +99,13 @@ function mapPatient(p){return {id:p.id||p.patient_id,name:p.name||p.full_name,ag
 function mapReport(r){return {id:String(r.id),file:r.file||r.filename,patientId:r.patient_id,patient:r.patient||r.patient_name||r.patient_id,type:r.type||r.report_type||"General",date:r.date||r.upload_date||"",status:r.status||"Uploaded",conf:r.confidence||"Medium",pct:r.pct||r.confidence_pct||0,size:fmtSize(r.size||r.file_size||0)};}
 async function loadBackendData(){
   try{
+    const activePatientId=selectedPatientId;
     const results=await Promise.all([apiRequest("/patients"),apiRequest("/reports"),apiRequest("/dashboard")]);
     patients.length=0;reports.length=0;
     patients.push.apply(patients,results[0].map(mapPatient));
     reports.push.apply(reports,results[1].map(mapReport));
     stats={patients:results[2].total_patients||0,reports:results[2].total_reports||0,pending:results[2].pending_review||0,alerts:results[2].alerts_detected||0};
-    if(patients.length)selectedPatientId=patients[0].id;
+    if(patients.length)selectedPatientId=getPatient(activePatientId)?activePatientId:patients[0].id;
     renderStats();renderRecent("");renderPatientsTable();renderReportsTable("");refreshPatientSelects();renderRecord(selectedPatientId);renderTimeline();renderInsights();
     for(let i=0;i<patients.length;i++)await loadPatientRecord(patients[i].id);
     renderStats();
@@ -476,7 +477,7 @@ $("#btnStartProcessing").addEventListener("click",function(){
   const list=$("#modalFileList");list.innerHTML="";
   toast("Report uploaded",modalFiles[0].name+" attached to "+p.name+".","info");
   simulateFile(modalFiles[0],list,async function(){
-    const form=new FormData();form.append("patient_id",p.id);form.append("report_type","General");form.append("file",modalFiles[0]);
+    const form=new FormData();form.append("patient_id",p.id);form.append("report_type",$("#modalReportType").value||"General");form.append("file",modalFiles[0]);
     try{await apiRequest("/reports",{method:"POST",body:form});await loadBackendData();selectPatient(pid);toast("Processing completed","The report was added to the patient record.","success");}
     catch(err){toast("Upload failed",err.message,"error");}
     modalFiles=[];$("#btnStartProcessing").disabled=true;
@@ -545,7 +546,7 @@ function renderLabs(p){
 }
 document.addEventListener("click",function(e){
   const v=e.target.closest("[data-verify]");
-  if(v){const l=patientLabs(selectedPatientId)[+v.dataset.verify];l.verified=true;l.reviewer=reviewer();const p=getPatient(selectedPatientId);addTimeline(p.id,"Value verified",l.test+" "+l.result+" "+l.unit+" verified by "+l.reviewer+".","input",l.reviewer,"ok");renderRecord(p.id);renderTimeline();toast("Record verified",l.test+" marked as verified by reviewer.","success");return;}
+  if(v){const l=patientLabs(selectedPatientId)[+v.dataset.verify];if(!l)return;apiRequest("/labs/"+encodeURIComponent(l.id),{method:"PUT",headers:{"Content-Type":"application/json","X-Reviewer":reviewer()},body:JSON.stringify({value:l.result,verified_by:reviewer()})}).then(function(){return loadPatientRecord(selectedPatientId);}).then(function(){renderStats();toast("Record verified",l.test+" marked as verified by reviewer.","success");}).catch(function(err){toast("Could not verify value",err.message,"error");});return;}
   const ed=e.target.closest("[data-edit]");if(ed){openEditModal(+ed.dataset.edit);return;}
   const ls=e.target.closest("[data-labsrc]");if(ls){openSourceForLab(patientLabs(selectedPatientId)[+ls.dataset.labsrc]);return;}
   const vs=e.target.closest("[data-viewsource]");if(vs){openSourceGeneric(vs.dataset.viewsource,"Linked documents");return;}
@@ -620,11 +621,8 @@ $("#btnResolveConflict").addEventListener("click",function(){
   const c=conflicts.filter(function(x){return x.id===activeConflictId;})[0];if(!c)return;
   const val=$("#conflictCorrected").value.trim();
   if(!val){toast("Correction required","Enter the confirmed value before resolving.","error");$("#conflictCorrected").focus();return;}
-  c.status="resolved";c.resolution=val+($("#conflictNotes").value.trim()?" - Note: "+$("#conflictNotes").value.trim():"");c.resolvedBy=reviewer();
-  stats.alerts=Math.max(0,stats.alerts-1);
-  addTimeline(c.patientId,"Conflict resolved",c.title+" - confirmed: "+val+".","input",c.resolvedBy,"ok");
-  renderStats();renderRecord(c.patientId);renderTimeline();closeModal("modalConflict");
-  toast("Conflict resolved","Correction saved and audit-logged.","success");
+  const resolution=val+($("#conflictNotes").value.trim()?" - Note: "+$("#conflictNotes").value.trim():"");
+  apiRequest("/conflicts/"+encodeURIComponent(c.id),{method:"PUT",headers:{"Content-Type":"application/json","X-Reviewer":reviewer()},body:JSON.stringify({resolution:resolution,resolved_by:reviewer()})}).then(function(){return loadPatientRecord(c.patientId);}).then(function(){return apiRequest("/dashboard");}).then(function(data){stats.alerts=data.alerts_detected||0;renderStats();closeModal("modalConflict");toast("Conflict resolved","Correction saved and audit-logged.","success");}).catch(function(err){toast("Could not resolve conflict",err.message,"error");});
 });
 function openEditModal(i){
   const l=patientLabs(selectedPatientId)[i];if(!l)return;
@@ -644,10 +642,7 @@ $("#btnSaveEdit").addEventListener("click",function(){
   const labs=patientLabs(selectedPatientId);const l=labs[editingIndex];if(!l)return;
   const v=parseFloat(String($("#editValueInput").value).replace(/,/g,""));
   if(isNaN(v)){toast("Invalid value","Enter a numeric result.","error");return;}
-  const old=l.result;l.result=v;l.verified=true;l.reviewer=reviewer();l.date=new Date().toISOString().slice(0,10);
-  addTimeline(selectedPatientId,"Value corrected and verified",l.test+" updated "+num(old)+" to "+num(v)+" "+l.unit+" by "+l.reviewer+".","input",l.reviewer,"ok");
-  renderRecord(selectedPatientId);renderTimeline();closeModal("modalEdit");
-  toast("Changes saved",l.test+" updated and marked Verified by reviewer.","success");
+  apiRequest("/labs/"+encodeURIComponent(l.id),{method:"PUT",headers:{"Content-Type":"application/json","X-Reviewer":reviewer()},body:JSON.stringify({value:v,verified_by:reviewer(),note:$("#editNotes").value.trim()})}).then(function(){return loadPatientRecord(selectedPatientId);}).then(function(){renderStats();closeModal("modalEdit");toast("Changes saved",l.test+" updated and marked Verified by reviewer.","success");}).catch(function(err){toast("Could not save changes",err.message,"error");});
 });
 
 /* ============ SOURCE MODALS ============ */

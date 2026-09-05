@@ -1015,6 +1015,50 @@ def api_delete_patient(patient_id):
     except Exception:
         return error("SERVER_ERROR", "Could not delete patient.", 500)
 
+@app.route("/api/labs/<int:lab_id>", methods=["PUT"])
+def api_update_lab(lab_id):
+    try:
+        row = query_one("SELECT * FROM lab_results WHERE id = ?", (lab_id,))
+        if not row:
+            return error("NOT_FOUND", "Lab result not found.", 404)
+        data = request.get_json(force=True, silent=True) or {}
+        try:
+            value = float(data.get("value"))
+        except (TypeError, ValueError):
+            return error("VALIDATION_ERROR", "value must be a number.", 400)
+        ref_min, ref_max, ref_text = row["ref_min"], row["ref_max"], row["reference_range"]
+        status = compute_status(value, ref_min, ref_max, ref_text)
+        verified_by = str(data.get("verified_by") or request.headers.get("X-Reviewer", "Reviewer"))[:120]
+        execute_write("""UPDATE lab_results SET value=?, value_text=?, status=?, verified=1,
+          verified_by=?, verified_at=?, updated_at=? WHERE id=?""",
+                      (value, str(value), status, verified_by, now_iso(), now_iso(), lab_id))
+        log_event(row["patient_id"], "value_verified", "Lab value updated",
+                  row["test_name"] + " updated and verified.", "Lab table", "input", verified_by)
+        return success(serialize_lab(query_one("SELECT * FROM lab_results WHERE id = ?", (lab_id,))),
+                       "Lab result updated.")
+    except Exception:
+        return error("SERVER_ERROR", "Could not update lab result.", 500)
+
+@app.route("/api/conflicts/<int:conflict_id>", methods=["PUT"])
+def api_resolve_conflict(conflict_id):
+    try:
+        row = query_one("SELECT * FROM conflicts WHERE id = ?", (conflict_id,))
+        if not row:
+            return error("NOT_FOUND", "Conflict not found.", 404)
+        data = request.get_json(force=True, silent=True) or {}
+        resolution = str(data.get("resolution") or "").strip()
+        if not resolution:
+            return error("VALIDATION_ERROR", "resolution is required.", 400)
+        reviewer_name = str(data.get("resolved_by") or request.headers.get("X-Reviewer", "Reviewer"))[:120]
+        execute_write("""UPDATE conflicts SET status='resolved', resolution=?, resolved_by=?,
+          resolved_at=? WHERE id=?""", (resolution, reviewer_name, now_iso(), conflict_id))
+        log_event(row["patient_id"], "conflict_resolved", "Conflict resolved",
+                  row["title"] + " resolved.", "Conflict review", "input", reviewer_name)
+        return success(serialize_conflict(query_one("SELECT * FROM conflicts WHERE id = ?", (conflict_id,))),
+                       "Conflict resolved.")
+    except Exception:
+        return error("SERVER_ERROR", "Could not resolve conflict.", 500)
+
 # ================= STRUCTURED RECORD =================
 @app.route("/api/reports", methods=["GET"])
 def api_list_reports():
