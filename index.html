@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedLens — AI-Powered Clinical Information Intelligence</title>
+<meta name="description" content="MedLens turns scattered medical information into a structured, understandable and reviewable patient record.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231e40af'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='white' stroke-width='2.5'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%2322d3ee'/%3E%3C/svg%3E">
+</head>
+<body>
+<a href="#mainContent" class="skip-link">Skip to main content</a>
+<div class="app">
+
+  <!-- Sidebar overlay for mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="30" height="30"><rect width="32" height="32" rx="8" fill="#1e40af"/><circle cx="16" cy="16" r="8.2" fill="none" stroke="#fff" stroke-width="2.4"/><circle cx="16" cy="16" r="3.2" fill="#22d3ee"/><path d="M22.5 9.5l1.8-1.8" stroke="#22d3ee" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">MedLens</span>
+        <span class="brand-sub">Clinical Intelligence</span>
+      </div>
+    </div>
+
+    <nav class="side-nav" aria-label="Sections">
+      <p class="nav-label">Workspace</p>
+      <button class="nav-item active" data-view="dashboard" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+        <span>Dashboard</span>
+      </button>
+      <button class="nav-item" data-view="patients">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Patients</span>
+        <span class="nav-count" id="navPatientCount">6</span>
+      </button>
+      <button class="nav-item" data-view="reports">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span>Reports</span>
+      </button>
+      <button class="nav-item" data-view="record">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/><circle cx="12" cy="15" r="2.2"/><path d="M12 13.6V13M12 16.4v.4M10.6 15H10M14 15h-.6"/></svg>
+        <span>Medical Records</span>
+      </button>
+      <button class="nav-item" data-view="compare">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="18" rx="2"/><rect x="13" y="3" width="8" height="18" rx="2"/><line x1="6" y1="8" x2="8" y2="8"/><line x1="6" y1="12" x2="8" y2="12"/><line x1="16" y1="8" x2="18" y2="8"/><line x1="16" y1="12" x2="18" y2="12"/></svg>
+        <span>Compare Reports</span>
+      </button>
+      <button class="nav-item" data-view="timeline">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+        <span>Timeline</span>
+      </button>
+      <button class="nav-item" data-view="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Settings</span>
+      </button>
+    </nav>
+
+    <div class="side-footer">
+      <div class="secure-chip" role="status">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        <div><strong>Secure &amp; Private</strong><small>Your information stays in this browser</small></div>
+        <span class="pulse-dot" aria-hidden="true"></span>
+      </div>
+      <div class="side-user">
+        <div class="avatar avatar-sm" aria-hidden="true">U</div>
+        <div class="side-user-info"><strong id="sideReviewerName">Reviewer</strong><small>Ready to review</small></div>
+        <span class="status-dot online" title="Online" aria-label="Online"></span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn hamburger" id="hamburgerBtn" aria-label="Open navigation menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="page-heading">
+        <h1 id="pageTitle">Clinical Intelligence Dashboard</h1>
+        <p id="pageSubtitle">Structured, traceable and reviewable patient records</p>
+      </div>
+      <div class="topbar-right">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+          <input type="search" id="globalSearch" placeholder="Search patients, reports..." aria-label="Search patients and reports" autocomplete="off">
+          <kbd>⌘K</kbd>
+          <div class="global-search-results" id="globalSearchResults" role="listbox" aria-label="Search results"></div>
+        </div>
+        <span class="privacy-pill" title="Your information stays in this browser">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          HIPAA-aware UI
+        </span>
+        <div class="notif-wrap">
+          <button class="icon-btn" id="notifBtn" aria-label="Notifications, no unread items" aria-haspopup="true" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="notif-badge" style="display:none">0</span>
+          </button>
+          <div class="notif-dropdown" id="notifDropdown" role="menu" aria-label="Notifications">
+            <div class="notif-head"><strong>Notifications</strong><button class="link-btn" id="markReadBtn">Mark all read</button></div>
+            <div class="notif-empty muted">No new notifications.</div>
+          </div>
+        </div>
+        <span class="top-reviewer-name" id="topReviewerName">Reviewer</span>
+        <button class="avatar avatar-md" id="avatarBtn" aria-label="Open profile">RE</button>
+      </div>
+    </header>
+
+    <main class="content" id="mainContent" tabindex="-1">
+
+      <!-- ================= DASHBOARD ================= -->
+      <section class="view active" id="view-dashboard" aria-label="Dashboard">
+        <div class="hero card">
+          <div class="hero-left">
+            <span class="eyebrow"><span class="live-dot"></span> Patient Overview · Clinical Intelligence Dashboard</span>
+            <h2>Scattered medical information, turned into a <em>structured, understandable</em> and <em>reviewable</em> patient record.</h2>
+            <p class="hero-desc">MedLens unifies patient history, prescriptions, lab reports and prior records — with reference-range awareness, source provenance, AI summaries and human verification.</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" data-goto="patients" data-focus="f-fullName">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add New Patient
+              </button>
+              <button class="btn btn-secondary" id="btnUploadHero">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Upload Medical Report
+              </button>
+            </div>
+            <div class="hero-trust">
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Human-verified</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Source-traced</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Reference-range aware</span>
+            </div>
+          </div>
+          <div class="hero-right">
+            <div class="hero-panel">
+              <div class="hero-panel-head">
+                <span class="mini-label">Record completeness</span>
+                <span class="mini-score" id="dashboardCompletenessScore">0%</span>
+              </div>
+              <div class="progress"><div class="progress-fill" id="dashboardCompletenessBar" style="width:0%"></div></div>
+              <ul class="hero-checks">
+                <li><span class="check ok" id="heroPatientCheck">✓</span> <span id="heroPatientText">Add a patient to begin</span></li>
+                <li><span class="check ok">✓</span> Upload reports when ready</li>
+                <li><span class="check warn">!</span> Review extracted information</li>
+                <li><span class="check ai">✦</span> Keep information easy to understand</li>
+              </ul>
+              <button class="btn btn-ghost btn-block" id="heroRecordAction" data-goto="patients" data-focus="f-fullName">Add your first patient</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card card">
+            <div class="stat-ico blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div><p class="stat-label">Total Patients</p><p class="stat-num" id="statPatients">0</p><p class="stat-sub" id="statPatientsSub">No patients added</p></div>
+          </div>
+          <div class="stat-card card">
+            <div class="stat-ico teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+            <div><p class="stat-label">Reports Processed</p><p class="stat-num" id="statReports">0</p><p class="stat-sub" id="statReportsSub">No reports uploaded</p></div>
+          </div>
+          <div class="stat-card card">
+            <div class="stat-ico amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg></div>
+            <div><p class="stat-label">Pending Review</p><p class="stat-num" id="statPending">0</p><p class="stat-sub">Nothing pending</p></div>
+          </div>
+          <div class="stat-card card">
+            <div class="stat-ico rose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+            <div><p class="stat-label">Alerts Detected</p><p class="stat-num" id="statAlerts">0</p><p class="stat-sub">No alerts</p></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card table-card">
+            <div class="card-head">
+              <div><h3>Recent Patients</h3><p class="muted">Patients you add will appear here.</p></div>
+              <button class="btn btn-primary btn-sm" data-goto="patients">View all</button>
+            </div>
+            <div class="table-scroll">
+              <table class="table" aria-label="Recent patients">
+                <thead><tr><th>Patient</th><th>Age</th><th>Last Report</th><th>Conditions</th><th>Reports</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody id="recentPatientsBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><h3>Clinical Insights</h3><p class="muted">Information from your uploaded reports will appear here.</p></div></div>
+            <div class="empty-insight"><strong>No insights yet</strong><p>Add a patient and upload a report to see clear, reviewable information.</p></div>
+            <div class="confidence-strip">
+              <span class="muted">Confidence details will appear after a report is uploaded.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="disclaimer-bar" role="note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <p><strong>Important:</strong> MedLens helps organize medical information. It does not replace advice, diagnosis, or treatment from a qualified healthcare professional.</p>
+        </div>
+      </section>
+
+      <!-- ================= PATIENTS ================= -->
+      <section class="view" id="view-patients" aria-label="Patients">
+        <div class="page-actions">
+          <div class="filter-row">
+            <div class="mini-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg><input type="search" id="patientsSearch" placeholder="Filter patients..." aria-label="Filter patients"></div>
+            <select id="filterStatus" aria-label="Filter by status"><option value="">All statuses</option><option>Verified</option><option>Active</option><option>Pending Review</option><option>Needs Attention</option></select>
+            <select id="filterRisk" aria-label="Filter by risk"><option value="">All risk levels</option><option>Low</option><option>Moderate</option><option>High</option></select>
+            <select id="filterVerification" aria-label="Filter by verification"><option value="">All verification</option><option value="verified">Verified</option><option value="unverified">Needs verification</option></select>
+          </div>
+          <span class="muted" id="patientsCount">6 patients</span>
+        </div>
+        <div class="card table-card">
+          <div class="table-scroll">
+            <table class="table" aria-label="All patients">
+              <thead><tr><th>Patient</th><th>ID</th><th>Age / Sex</th><th>Last Report</th><th>Conditions</th><th>Risk</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody id="patientsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card form-card" id="intakeCard">
+          <div class="card-head">
+            <div><h3 id="intakeTitle">Add a Patient</h3><p class="muted" id="intakeSubtitle">Enter the patient details below. Required fields are marked *.</p></div>
+            <span class="src-badge src-input">Patient input</span>
+          </div>
+          <form id="intakeForm" novalidate>
+            <div class="form-grid">
+              <div class="field"><label for="f-patientId">Patient ID *</label><input id="f-patientId" name="patientId" placeholder="e.g. P-1007" required><small class="err" data-err="f-patientId"></small></div>
+              <div class="field"><label for="f-fullName">Full Name *</label><input id="f-fullName" name="fullName" placeholder="e.g. Anita Desai" required><small class="err" data-err="f-fullName"></small></div>
+              <div class="field"><label for="f-age">Age *</label><input id="f-age" name="age" type="number" min="0" max="130" placeholder="e.g. 42" required><small class="err" data-err="f-age"></small></div>
+              <div class="field"><label for="f-sex">Sex *</label><select id="f-sex" name="sex" required><option value="">Select…</option><option>Female</option><option>Male</option><option>Other</option><option>Prefer not to say</option></select><small class="err" data-err="f-sex"></small></div>
+              <div class="field"><label for="f-dob">Date of Birth</label><input id="f-dob" name="dob" type="date"></div>
+              <div class="field"><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" placeholder="+91 98765 43210"></div>
+              <div class="field field-full"><label for="f-symptoms">Symptoms</label><input id="f-symptoms" name="symptoms" placeholder="e.g. Fatigue, headache for 2 weeks"></div>
+              <div class="field"><label for="f-conditions">Existing Conditions</label><input id="f-conditions" name="conditions" placeholder="e.g. Type 2 Diabetes, Hypertension"></div>
+              <div class="field"><label for="f-allergies">Allergies</label><input id="f-allergies" name="allergies" placeholder="e.g. Penicillin, Sulfa"></div>
+              <div class="field"><label for="f-meds">Current Medications</label><input id="f-meds" name="meds" placeholder="e.g. Metformin 500mg — morning"></div>
+              <div class="field"><label for="f-emergency">Emergency Contact</label><input id="f-emergency" name="emergency" placeholder="Name + phone"></div>
+              <div class="field field-full"><label for="f-notes">Additional Notes</label><textarea id="f-notes" name="notes" rows="3" placeholder="Any other relevant history, lifestyle notes, previous procedures..."></textarea></div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="btnSavePatient">Save Patient</button>
+              <button type="button" class="btn btn-ghost" id="btnClearForm">Clear Form</button>
+              <span class="form-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Stored only in this browser</span>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ================= REPORTS ================= -->
+      <section class="view" id="view-reports" aria-label="Reports">
+        <div class="grid-2 upload-grid">
+          <div class="card">
+            <div class="card-head"><div><h3>Upload a Medical Report</h3><p class="muted">Choose a PDF, JPG, or PNG file to add it to a patient.</p></div></div>
+            <div class="dropzone" id="dropZone" role="button" tabindex="0" aria-label="Drag and drop a medical report, or press Enter to browse files">
+              <div class="dz-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+              <p><strong>Drag &amp; drop your report here</strong></p>
+              <p class="muted">or</p>
+              <button type="button" class="btn btn-primary btn-sm" id="btnBrowse">Browse Files</button>
+              <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" hidden aria-label="Choose report file">
+              <div class="format-chips"><span>PDF</span><span>JPG</span><span>PNG</span><span>Max 15 MB</span></div>
+            </div>
+            <div id="fileList" class="file-list" aria-live="polite"></div>
+            <div class="extracted hidden" id="extractedPreview">
+              <h4><span class="check ok">✓</span> Extracted information <span class="src-badge src-report">Uploaded report</span></h4>
+              <ul id="extractedList"></ul>
+              <div class="extracted-actions">
+                <button class="btn btn-primary btn-sm" data-goto="record">Open in structured record</button>
+                <button class="btn btn-ghost btn-sm" id="btnViewExtractSource">View source excerpt</button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><h3>What Happens Next</h3><p class="muted">The report is read and organized in four steps.</p></div></div>
+            <ol class="pipeline">
+              <li class="done"><span class="pipe-num">1</span><div><strong>File received &amp; validated</strong><p>Format check, size check, page count</p></div></li>
+              <li class="done"><span class="pipe-num">2</span><div><strong>Text &amp; table extraction</strong><p>OCR + layout detection for lab tables</p></div></li>
+              <li class="active" id="pipeStep3"><span class="pipe-num">3</span><div><strong>Reference-range matching</strong><p>Each value checked against its printed range</p></div></li>
+              <li id="pipeStep4"><span class="pipe-num">4</span><div><strong>Conflict &amp; provenance tagging</strong><p>Cross-report comparison + source badges</p></div></li>
+            </ol>
+            <div class="pipeline-note"><strong>Privacy-first:</strong> Files are processed in this browser and are not sent to a server.</div>
+          </div>
+        </div>
+
+        <div class="card table-card">
+          <div class="card-head wrap">
+            <div><h3>All Reports</h3><p class="muted" id="reportsCount">No reports uploaded yet.</p></div>
+            <div class="filter-row">
+              <select id="filterReportType" aria-label="Filter by report type"><option value="">All types</option><option>CBC</option><option>Lipid Panel</option><option>Thyroid</option><option>HbA1c</option><option>Liver Function</option><option>Kidney Function</option><option>Vitamin Panel</option><option>Prescription</option></select>
+              <select id="filterReportStatus" aria-label="Filter by report status"><option value="">All statuses</option><option>Verified</option><option>Processed</option><option>Pending Review</option><option>Processing</option></select>
+              <select id="filterReportDate" aria-label="Filter by date"><option value="">Any date</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option></select>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table class="table" aria-label="Medical reports">
+              <thead><tr><th>Patient</th><th>Patient details</th><th>AI analysis</th><th>Latest result</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody id="reportsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= RECORD ================= -->
+      <section class="view" id="view-record" aria-label="Medical record">
+        <div class="record-toolbar card">
+          <div class="record-select">
+            <label for="recordPatientSelect">Viewing record for</label>
+            <select id="recordPatientSelect"></select>
+          </div>
+          <div class="record-toolbar-btns">
+            <button class="btn btn-ghost btn-sm" id="btnVerifyAll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Verify all values</button>
+            <button class="btn btn-primary btn-sm" id="btnExportRecord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export Record</button>
+          </div>
+        </div>
+
+        <div class="patient-hero card" id="printArea">
+          <div class="avatar avatar-lg" id="r-avatar">RV</div>
+          <div class="patient-hero-info">
+            <div class="patient-hero-top"><h2 id="r-name">No patient selected</h2><span class="badge badge-neutral" id="r-status">Waiting for patient</span><span class="risk-badge" id="r-risk"></span></div>
+            <p class="muted" id="r-meta">Add a patient to view their medical record.</p>
+            <p class="muted small" id="r-updated">No information available yet</p>
+            <div class="complete-row"><div class="progress slim"><div class="progress-fill" id="r-completenessBar" style="width:0%"></div></div><small id="r-completenessText">No record yet</small></div>
+          </div>
+          <div class="patient-hero-side">
+            <div class="legend"><strong>Source legend</strong><span><i class="lg-input"></i>Patient input</span><span><i class="lg-report"></i>Uploaded report</span><span><i class="lg-ai"></i>AI-generated</span></div>
+          </div>
+        </div>
+
+        <div class="record-grid">
+          <div class="record-main">
+            <div class="card">
+              <div class="card-head"><div><h3>Laboratory Results</h3><p class="muted">Status is based only on the reference range shown per row</p></div><button class="btn btn-ghost btn-sm" id="btnUploadFromRecord">+ Add report</button></div>
+              <div class="table-scroll">
+                <table class="table lab-table" aria-label="Laboratory results">
+                  <thead><tr><th>Test</th><th>Result</th><th>Unit</th><th>Reference Range</th><th>Status</th><th>Date</th><th>Source</th><th>Confidence</th><th>Verify / Edit</th></tr></thead>
+                  <tbody id="labTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card ai-card" id="aiSummaryCard">
+              <div class="card-head">
+                <div><h3><span class="ai-spark">✦</span> AI-Powered Patient Summary</h3><p class="muted">Patient-friendly · concise · always reviewable</p></div>
+                <span class="src-badge src-ai">AI-generated</span>
+              </div>
+              <div class="ai-grid" id="aiSummaryBody"></div>
+              <div class="ai-conf-row">
+                <span class="conf-pill high">● High confidence — extraction</span>
+                <span class="conf-pill med">● Medium confidence — trend note</span>
+                <span class="conf-pill low">● Needs verification — 2 values</span>
+              </div>
+              <div class="disclaimer-box">MedLens assists with organizing and understanding medical information. It does not replace professional medical diagnosis or treatment.</div>
+            </div>
+
+            <div class="card conflict-card" id="conflictsCard">
+              <div class="card-head"><div><h3>Inconsistencies &amp; Conflicts</h3><p class="muted">Cross-source comparison · requires human decision</p></div><span class="badge badge-alert" id="conflictCount">3 open</span></div>
+              <div id="conflictsList"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><div><h3>Previous Reports</h3><p class="muted">Every value traces back to one of these documents</p></div><button class="btn btn-ghost btn-sm" data-goto="compare">Compare →</button></div>
+              <div class="prev-list" id="prevReportsList"></div>
+            </div>
+          </div>
+
+          <div class="record-side">
+            <div class="card"><div class="card-head"><h3>Patient Information</h3><button class="btn btn-ghost btn-xs" id="btnEditPatientDetails">Edit details</button></div><dl class="info-list" id="cardPatientInfo"></dl></div>
+            <div class="card"><div class="card-head"><h3>Symptoms</h3><button class="link-btn" data-viewsource="symptoms">View source</button></div><div class="tag-list" id="cardSymptoms"></div></div>
+            <div class="card"><div class="card-head"><h3>Existing Conditions</h3><button class="link-btn" data-viewsource="conditions">View source</button></div><div class="tag-list" id="cardConditions"></div></div>
+            <div class="card"><div class="card-head"><h3>Allergies</h3><span class="badge badge-alert" id="allergyFlag">Review</span></div><div class="tag-list" id="cardAllergies"></div></div>
+            <div class="card"><div class="card-head"><h3>Current Medications</h3><button class="link-btn" data-viewsource="meds">View source</button></div><ul class="med-list" id="cardMeds"></ul></div>
+            <div class="card alert-card"><div class="card-head"><h3>Clinical Alerts</h3><span class="badge badge-alert" id="alertCount">3</span></div><div id="clinicalAlertsList"></div></div>
+            <div class="card"><div class="card-head"><h3>Source &amp; Provenance</h3><button class="link-btn" data-viewsource="provenance">View source</button></div><div id="provenanceBody"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= COMPARE ================= -->
+      <section class="view" id="view-compare" aria-label="Compare reports">
+        <div class="card">
+          <div class="card-head wrap"><div><h3>Compare Reports</h3><p class="muted">Side-by-side previous vs current · changed values highlighted</p></div>
+          <div class="filter-row">
+            <div class="field inline"><label for="comparePatient">Patient</label><select id="comparePatient"></select></div>
+            <div class="field inline"><label for="comparePrev">Previous</label><select id="comparePrev"></select></div>
+            <div class="field inline"><label for="compareCurr">Current</label><select id="compareCurr"></select></div>
+          </div></div>
+          <div class="compare-cards">
+            <div class="compare-doc" id="comparePrevCard"></div>
+            <div class="compare-arrow" aria-hidden="true">→</div>
+            <div class="compare-doc current" id="compareCurrCard"></div>
+          </div>
+          <div class="compare-summary" id="compareSummary"></div>
+          <div class="table-scroll">
+            <table class="table" aria-label="Report comparison">
+              <thead><tr><th>Test</th><th>Previous value</th><th>Current value</th><th>Reference range</th><th>Change</th><th>Status</th></tr></thead>
+              <tbody id="compareTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TIMELINE ================= -->
+      <section class="view" id="view-timeline" aria-label="Timeline">
+        <div class="card">
+          <div class="card-head wrap"><div><h3>Patient Medical Timeline</h3><p class="muted">Audit history · chronological, source-tagged events</p></div>
+          <div class="filter-row"><label class="muted small" for="timelinePatientFilter">Patient</label><select id="timelinePatientFilter"></select></div></div>
+          <ol class="timeline" id="timelineList"></ol>
+        </div>
+      </section>
+
+      <!-- ================= SETTINGS ================= -->
+      <section class="view" id="view-settings" aria-label="Settings">
+        <div class="grid-2">
+          <div class="card">
+            <h3>Settings</h3><p class="muted">Choose how your workspace appears and works.</p>
+            <div class="setting-row"><div><strong>Your name</strong><p class="muted small">Shown beside your profile and on reviews</p></div><input type="text" id="settingReviewer" value="Reviewer" aria-label="Your name" placeholder="Enter your name"></div>
+            <div class="setting-row"><div><strong>Ask for a note when editing</strong><p class="muted small">Helps explain changes to report values</p></div><button class="switch on" role="switch" aria-checked="true" aria-label="Ask for a note when editing"><span></span></button></div>
+            <div class="setting-row"><div><strong>Mark unusual results</strong><p class="muted small">Checks results against the report's range</p></div><button class="switch on" role="switch" aria-checked="true" aria-label="Mark unusual results"><span></span></button></div>
+            <div class="setting-row"><div><strong>Show confidence labels</strong><p class="muted small">Shows how much review an item may need</p></div><button class="switch on" role="switch" aria-checked="true" aria-label="Show confidence labels"><span></span></button></div>
+            <button class="btn btn-primary" id="btnSaveSettings">Save changes</button>
+          </div>
+          <div class="card">
+            <h3>Privacy &amp; Safety</h3><p class="muted">Simple information about how this workspace works.</p>
+            <ul class="safety-list">
+              <li><span class="check ok">✓</span><div><strong>Private on this device</strong><p>Your information stays in this browser.</p></div></li>
+              <li><span class="check ok">✓</span><div><strong>Reports stay organized</strong><p>Uploaded files are prepared for easy review.</p></div></li>
+              <li><span class="check ok">✓</span><div><strong>You stay in control</strong><p>You can edit and check every report value.</p></div></li>
+              <li><span class="check warn">!</span><div><strong>For organization only</strong><p>MedLens does not replace advice, diagnosis, or treatment from a healthcare professional.</p></div></li>
+            </ul>
+            <div class="setting-row"><div><strong>Clear workspace</strong><p class="muted small">Remove all information from this page</p></div><button class="btn btn-ghost btn-sm" id="btnResetDemo">Clear data</button></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="app-footer">
+      <p><strong>MedLens</strong> · Clear medical information, in one place</p>
+      <p class="muted small">MedLens assists with organizing and understanding medical information. It does not replace professional medical diagnosis or treatment.</p>
+    </footer>
+  </div>
+</div>
+
+<!-- ============ MODALS ============ -->
+<div class="modal" id="modalUpload" role="dialog" aria-modal="true" aria-labelledby="uploadTitle" aria-hidden="true">
+  <div class="modal-box">
+    <div class="modal-head"><h3 id="uploadTitle">Upload Medical Report</h3><button class="icon-btn" data-close aria-label="Close upload dialog">✕</button></div>
+    <div class="modal-body">
+      <div class="dropzone small" id="modalDropZone" role="button" tabindex="0" aria-label="Drop a file or press Enter to browse">
+        <p><strong>Drop file here or</strong></p>
+        <button type="button" class="btn btn-secondary btn-sm" id="btnModalBrowse">Browse Files</button>
+        <input type="file" id="modalFileInput" accept=".pdf,.jpg,.jpeg,.png" hidden aria-label="Choose report file">
+        <div class="format-chips"><span>PDF</span><span>JPG</span><span>PNG</span></div>
+      </div>
+      <div class="field"><label for="modalPatient">Attach to patient</label><select id="modalPatient"></select></div>
+      <div id="modalFileList" class="file-list"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" data-close>Cancel</button><button class="btn btn-primary" id="btnStartProcessing" disabled>Process report</button></div>
+  </div>
+</div>
+
+<div class="modal" id="modalSource" role="dialog" aria-modal="true" aria-labelledby="sourceTitle" aria-labelledby2="x" aria-hidden="true">
+  <div class="modal-box wide">
+    <div class="modal-head"><h3 id="sourceTitle">Source excerpt</h3><button class="icon-btn" data-close aria-label="Close source view">✕</button></div>
+    <div class="modal-body">
+      <p class="muted small" id="sourceMeta">Uploaded report</p>
+      <div class="source-split">
+        <div class="doc-preview" id="sourceDocPreview" aria-label="Source document preview"></div>
+        <div class="source-detail">
+          <h4>What was extracted</h4>
+          <div id="sourceExcerpt"></div>
+          <div class="prov-tags" id="sourceProv"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot"><span class="muted small">Source details from the uploaded report</span><button class="btn btn-primary btn-sm" data-close>Done</button></div>
+  </div>
+</div>
+
+<div class="modal" id="modalEdit" role="dialog" aria-modal="true" aria-labelledby="editTitle" aria-hidden="true">
+  <div class="modal-box">
+    <div class="modal-head"><h3 id="editTitle">Edit extracted value</h3><button class="icon-btn" data-close aria-label="Close edit dialog">✕</button></div>
+    <div class="modal-body">
+      <div class="edit-banner"><span class="src-badge src-report">Uploaded report</span><span aria-hidden="true">→</span><span class="src-badge src-input">Human-verified</span></div>
+      <p class="field-label-static">Test: <strong id="editTestName">Hemoglobin</strong> <span class="muted" id="editUnit">g/dL</span></p>
+      <p class="muted small">Reference range: <strong id="editRef">13.0–17.0</strong> · Status updates automatically from this range.</p>
+      <div class="form-grid">
+        <div class="field"><label for="editValueInput">Corrected result *</label><input id="editValueInput" inputmode="decimal" placeholder="e.g. 13.8"></div>
+        <div class="field"><label for="editNotes">Reviewer note</label><input id="editNotes" placeholder="Reason for correction (optional)"></div>
+      </div>
+      <p class="muted small" id="editPreview" aria-live="polite"></p>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" data-close>Cancel</button><button class="btn btn-primary" id="btnSaveEdit">Save &amp; mark verified</button></div>
+  </div>
+</div>
+
+<div class="modal" id="modalConflict" role="dialog" aria-modal="true" aria-labelledby="conflictTitle" aria-hidden="true">
+  <div class="modal-box wide">
+    <div class="modal-head"><h3 id="conflictTitle">Review conflict</h3><button class="icon-btn" data-close aria-label="Close conflict review">✕</button></div>
+    <div class="modal-body">
+      <p class="muted" id="conflictDesc"></p>
+      <div class="conflict-cols">
+        <label class="conflict-opt"><input type="radio" name="conflictChoice" value="A" checked><span class="conflict-card"><strong>Source A</strong><span id="conflictSourceA"></span></span></label>
+        <label class="conflict-opt"><input type="radio" name="conflictChoice" value="B"><span class="conflict-card"><strong>Source B</strong><span id="conflictSourceB"></span></span></label>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label for="conflictCorrected">Corrected / confirmed value *</label><input id="conflictCorrected" placeholder="Enter the confirmed information"></div>
+        <div class="field"><label for="conflictNotes">Reviewer note</label><input id="conflictNotes" placeholder="e.g. Confirmed with patient on call"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" data-close>Cancel</button><button class="btn btn-primary" id="btnResolveConflict">Resolve &amp; save</button></div>
+  </div>
+</div>
+
+<div class="modal" id="modalPatient" role="dialog" aria-modal="true" aria-labelledby="patientModalTitle" aria-hidden="true">
+  <div class="modal-box">
+    <div class="modal-head"><h3 id="patientModalTitle">Patient details</h3><button class="icon-btn" data-close aria-label="Close patient details">✕</button></div>
+    <div class="modal-body" id="patientModalBody"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" data-close>Close</button><button class="btn btn-primary btn-sm" id="btnOpenRecordFromModal">Open full record</button></div>
+  </div>
+</div>
+
+<div class="modal" id="modalExport" role="dialog" aria-modal="true" aria-labelledby="exportTitle" aria-hidden="true">
+  <div class="modal-box">
+    <div class="modal-head"><h3 id="exportTitle">Export Record</h3><button class="icon-btn" data-close aria-label="Close export dialog">✕</button></div>
+    <div class="modal-body">
+      <p class="muted">Prepare a printable clinical summary for <strong id="exportPatientName">the selected patient</strong>. Select sections to include:</p>
+      <label class="check-row"><input type="checkbox" checked> Patient information &amp; history</label>
+      <label class="check-row"><input type="checkbox" checked> Laboratory results with reference ranges</label>
+      <label class="check-row"><input type="checkbox" checked> AI summary + confidence indicators</label>
+      <label class="check-row"><input type="checkbox" checked> Provenance &amp; verification log</label>
+      <label class="check-row"><input type="checkbox"> Include timeline / audit history</label>
+      <div class="export-ready hidden" id="exportReady"><span class="check ok">✓</span><div><strong>Patient record prepared for export.</strong><p class="muted small">Use Print / Save as PDF to download.</p></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" data-close>Cancel</button><button class="btn btn-ghost" id="btnPrintRecord">Print</button><button class="btn btn-primary" id="btnConfirmExport">Prepare export</button></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="false"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
